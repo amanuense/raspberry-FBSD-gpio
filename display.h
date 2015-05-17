@@ -15,7 +15,7 @@
 #define NUM_GPIO_PINS_USED 11
 
 #define PIPE_FILE "/var/tmp/displayctl"
-#define MAX_DIGITS 3
+#define MAX_DIGITS 4
 /*Array for of above definitions*/
 
 static const uint8_t digitPins [] =
@@ -58,11 +58,20 @@ static const uint8_t segmentDigits [] =
    1, 0, 0, 0, 1, 1, 1, 0,	// F
    0, 0, 0, 0, 0, 0, 0, 0,	// blank
 } ;
- 
+
+/*
+
+*/ 
 
 // digits:
 //	A global variable which is written to by the main program and
 //	read from by the thread that updates the display. Only the first
 //	4 digits (ascii) are used.
 
-char digits[3];
+char digits[3] = {0,0,0};
+//Global FD For GPIO.
+int gpio_fd;
+FILE *fifo_fd;
+int point_at_digit = -1;
+//Threads
+pthread_t displayThread, pipeReadThread ;
