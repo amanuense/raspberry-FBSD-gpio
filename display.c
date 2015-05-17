@@ -21,6 +21,10 @@ __FBSDID("$FreeBSD$");
 #include <sys/stat.h>
 #include <sys/types.h>
 
+
+//the deifference between 'a' and 'A' is this bit.
+#define ASCII_CAPS 0x20
+
 void config_gpio(int mode){
     for(int i=0;i<NUM_GPIO_PINS_USED;i++){
         struct gpio_pin gpiopin;
@@ -90,13 +94,16 @@ void* read_pipe(void *a){
     
 }
 void sig_handler(int signal){
+    //my recomendation is to use a switch, easier to maintain.
     if((signal == SIGINT) || (signal == SIGTERM)|| (signal == SIGKILL)){
         printf("Terminating Threads!\n");
+        //why not use join instead of just sleeping
         pthread_cancel(displayThread);
         usleep(500);
         pthread_cancel(pipeReadThread);
         usleep(500);
         printf("Deactivating GPIO PINS!\n");
+        //avoid using literals declare a constant instead (macro is a literal too but it is better than numbers)
         for(int i=0;i < 11;i++){
             digitalWrite(gpio_fd,allPins[i],0);
             usleep(500);
@@ -111,9 +118,12 @@ void sig_handler(int signal){
     }
 }
 
+//either return something or lose the void *, also if the parameter is not used
+//make sure you remove it.
 void *displayDigits (void *dummy){
   uint8_t digit, segment ;
   uint8_t index, d, segVal ;
+  //any reason for the infinite loop without any way to get out. why not a while(1) as the rest of the code?
   for (;;)
   {    
         for (digit = 0 ; digit < 3 ; ++digit)
@@ -127,7 +137,7 @@ void *displayDigits (void *dummy){
                         d = toupper (digits [digit]) ;
                         if((d >= '0') && (d <= '9'))	// Digit
                             index = d - '0' ;
-                        else if ((d >= 'A') && (d <= 'F'))	// Hex
+                        else if ( ((d | ASCII_CAPS) >= 'a') && (d | ASCII_CAPS) <= 'f') )	// Hex lower and upper case
                             index = d - 'A' + 10 ;
                         else
                             index = 16 ;				// Blank
@@ -181,6 +191,7 @@ int setup(void){
             printf ("thread create failed: %s\n", strerror (errno)) ;
             exit (1) ;
         }
+    //an easy way to to wait for a signal here instead. psemaphore will do the trick
     sleep(1) ; // Just to make sure it's started
 
     if (pthread_create (&pipeReadThread, NULL, read_pipe, NULL) != 0)
@@ -188,6 +199,7 @@ int setup(void){
             printf ("thread create failed: %s\n", strerror (errno)) ;
             exit (1) ;
         }
+    //ditto
     sleep(1) ; // Just to make sure it's started
     return 1;
 }
@@ -196,6 +208,7 @@ int setup(void){
 
 int main(void){
     setup();
+    //well this is ominus :P how do you get out of the infitite loop?
     while(1){
         sleep(1);
     }
