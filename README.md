@@ -3,7 +3,7 @@ raspberry-FBSD-gpio
 Code taken from wiringPi and http://project-downloads.drogon.net/files/led/led.c
 currently only digitalWrite and delay functions are implemented, using IOCTL
 Next step is to make direct memory access to the GPIO, via /dev/mem
- 
+<pre> 
 /*
  *       --a--
  *      |     |
@@ -32,7 +32,7 @@ E       18
 F       12
 G       8
 P       24
- 
+</pre> 
 Usage:
 To build:
 make clean all tar
