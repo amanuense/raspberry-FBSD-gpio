@@ -26,6 +26,9 @@ static const uint8_t digitPins [] =
 
 /*Display Segments Pins vector mapping*/
 /*This Mapping does not include the point (P) */
+//static variables are compiled and linked on the file they are declared
+//declaring static on a header file doesn't help that much. lose the static
+//or move the varaible to a c file.
 static const uint8_t segmentPins [] =
     {
         16,7,25,23,18,12,8,24
