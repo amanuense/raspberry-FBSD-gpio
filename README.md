@@ -37,8 +37,11 @@ Usage:
 To build:
 make clean all tar
 Install:
-copy/extract the tar archive copy lib/libgpio_control.so to /usr/local/lib
+copy/extract the tar archive 
+copy lib/libgpio_control.so to /usr/local/lib
+
+To Execute:
 ./sbin/display
 
+To Update the Display:
 echo "12.5" >> /var/tmp/displayctl
-
